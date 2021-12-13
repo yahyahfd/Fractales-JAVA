@@ -1,4 +1,5 @@
 
+
 public class Complexe {
 	private double r;
     private double i;
@@ -26,7 +27,7 @@ public class Complexe {
     }
 
     public String toString() {
-            return this.r + " + i * " + this.i;
+            return this.r + " + " + this.i+" i";
     }
 
     public Complexe somme(Complexe c) {
@@ -81,8 +82,31 @@ public class Complexe {
     public static Complexe fromPolarCoordinates(double rho, double theta) {
             return new Complexe(rho*Math.cos(theta),rho*Math.sin(theta));
     }
+    
+	public Complexe JuliaOP(Complexe c) {
+		return (this.multiplication(this)).somme(c);
+	}
+	
+	public void JuliaIteration(Complexe c,int nb) {
+		this.toString();
+		Complexe tmp = this;
+		for(int i = 0; i < nb ; i++) {
+			tmp = tmp.JuliaOP(c);
+			System.out.println(tmp.toString());		
+		}
+	}
 
-
+	public int divergence(Complexe c) {
+		int ite = 0;
+		int max_ite = 1000;
+		Complexe zn = this;
+		int radius = 2;
+		while(ite < max_ite && zn.module() <= radius) {
+			zn = zn.JuliaOP(c);
+			ite++;
+		}
+		return ite;
+	}
 
 }
 
