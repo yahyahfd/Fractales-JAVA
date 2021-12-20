@@ -83,6 +83,8 @@ public class Complexe {
             return new Complexe(rho*Math.cos(theta),rho*Math.sin(theta));
     }
     
+    
+    
 	public Complexe JuliaOP(Complexe c) {
 		return (this.multiplication(this)).somme(c);
 	}
@@ -96,9 +98,8 @@ public class Complexe {
 		}
 	}
 
-	public int divergence(Complexe c) {
+	public int divergence(Complexe c, int max_ite) {
 		int ite = 0;
-		int max_ite = 1000;
 		Complexe zn = this;
 		int radius = 2;
 		while(ite < max_ite && zn.module() <= radius) {
