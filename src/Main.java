@@ -1,3 +1,5 @@
+package projet;
+
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,7 +11,7 @@ public class Main {
 
 //	private static final int MAX_ITER = 1000;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 //		BufferedImage img = new BufferedImage(201,201, BufferedImage.TYPE_INT_RGB);
 //		int r = 64; int g = 224; int b = 208;  //turquoise
@@ -65,7 +67,9 @@ public class Main {
 //		Julia.affichage(r1,c1,1000);
 		
 		Polynome test = new Polynome(2,5,new Polynome(1,2,new Polynome(0,7,null)));
-		System.out.println(test.toString());
+		Polynome test2 = Polynome.parsePoly("5x^2 -2x^1 +7x^0");
+		System.out.println(test.toString(null));
+		System.out.println(test2.toString(null));
 	}
 
 }

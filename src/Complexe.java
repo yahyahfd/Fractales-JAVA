@@ -1,4 +1,4 @@
-
+package projet;
 
 public class Complexe {
 	private double r;
@@ -110,4 +110,3 @@ public class Complexe {
 	}
 
 }
-
