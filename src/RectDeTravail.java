@@ -1,6 +1,5 @@
 package projet;
 
-
 public class RectDeTravail {
 	Double x1,x2,y1,y2,pas;
 	
