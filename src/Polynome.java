@@ -1,12 +1,17 @@
 package projet;
 
-
 public class Polynome {
 	int degre;
 	int coef;
 	Polynome next;
 	
-	public Polynome(int d,int c, Polynome n) throws Exception {
+	private Polynome(int d, int c, Polynome n) {
+		this.degre=d;
+		this.coef=c;
+		this.next=n;
+	}
+	
+	public static Polynome makePoly(int d,int c, Polynome n) throws Exception {
 		try {
             if(d<=n.degre) {
             	throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax.");
@@ -14,9 +19,7 @@ public class Polynome {
         } catch (NullPointerException e) {
         	//this means our polynome is finished, we don't do anything
         }
-		this.degre = d;
-		this.coef = c;
-		this.next = n;
+    	return new Polynome(d,c,n);
 	}
 	
 	public static Polynome parsePoly (String s) throws NumberFormatException, Exception {
@@ -25,7 +28,7 @@ public class Polynome {
 		for(int i=tmp.length-1;i>=0;i--) {
 			String[] tmp2 = tmp[i].split("x");
 			if(tmp2.length==2) {
-				res = new Polynome(Integer.parseInt(tmp2[1].substring(1)),Integer.parseInt(tmp2[0]),res);
+				res = makePoly(Integer.parseInt(tmp2[1].substring(1)),Integer.parseInt(tmp2[0]),res);
 			}else {
 				throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax.");
 			}
@@ -33,7 +36,7 @@ public class Polynome {
 		return res;
 	}
 	
-	public String toString(Polynome n) {
+	private String toString(Polynome n) {
 		String rescoef;
 		if(n==null) {
 			rescoef = ""+this.coef;
@@ -54,6 +57,9 @@ public class Polynome {
 			return rescoef+"x^"+this.degre+this.next.toString(this);
 		}
 	}
-	
+
+	public String toString() {
+		return this.toString(null);
+	}
 	
 }
