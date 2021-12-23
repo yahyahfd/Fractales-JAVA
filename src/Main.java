@@ -1,12 +1,5 @@
 package projet;
 
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 public class Main {
 
 //	private static final int MAX_ITER = 1000;
@@ -62,14 +55,22 @@ public class Main {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		Polynome testa = Polynome.makePoly(0,1,null);
+		Polynome test = Polynome.makePoly(2,3,testa);
 		
-//		RectDeTravail r1 = new RectDeTravail(-1.0,1.0,-1.0,1.0,0.01);
-//		Julia.affichage(r1,c1,1000);
+		RectDeTravail r1 = new RectDeTravail(-1.0,1.0,-1.0,1.0,0.01);
 		
-		Polynome test = new Polynome(2,5,new Polynome(1,2,new Polynome(0,7,null)));
+		Julia.affichage(r1,test,c1,1000);
+		System.out.println(test.toString());
+//		Polynome pst = new Polynome(2,1,null);
+//		Complexe tst = new Complexe(4,3);
+//		System.out.println(tst.toString());
+//		tst = tst.unPoly(pst);
+//		System.out.println(tst.toString());
+		Polynome test1 = Polynome.makePoly(2,5,Polynome.makePoly(1,2,Polynome.makePoly(0,7,null)));
 		Polynome test2 = Polynome.parsePoly("5x^2 -2x^1 +7x^0");
-		System.out.println(test.toString(null));
-		System.out.println(test2.toString(null));
+		System.out.println(test1.toString());
+		System.out.println(test2.toString());
 	}
 
 }

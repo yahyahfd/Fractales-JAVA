@@ -49,14 +49,8 @@ public class Complexe {
             return new Complexe(reelle,imaginaire);
     }
 
-    public boolean equals(Object other) {
-            if(other instanceof Complexe) {
-                    Complexe o = (Complexe) other;
-                    return this.r == o.getR() && this.i == o.getI();
-            }else {
-                    return false;
-            }
-
+    public boolean equals(Complexe other) {
+    				return this.r == o.getR() && this.i == o.getI();
     }
 
     public Complexe conj() {
@@ -82,19 +76,18 @@ public class Complexe {
     public static Complexe fromPolarCoordinates(double rho, double theta) {
             return new Complexe(rho*Math.cos(theta),rho*Math.sin(theta));
     }
-    
-    
-    
+
+
+
 	public Complexe JuliaOP(Complexe c) {
 		return (this.multiplication(this)).somme(c);
 	}
-	
+
 	public void JuliaIteration(Complexe c,int nb) {
-		this.toString();
 		Complexe tmp = this;
 		for(int i = 0; i < nb ; i++) {
 			tmp = tmp.JuliaOP(c);
-			System.out.println(tmp.toString());		
+			System.out.println(tmp.toString());
 		}
 	}
 
