@@ -1,6 +1,7 @@
 package projet;
 
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,31 +10,36 @@ import javax.imageio.ImageIO;
 
 public class Julia {
 	
-	public static void affichage(RectDeTravail rec,Complexe c,int max_iter) {
-		BufferedImage img = new BufferedImage(rec.NbPixelX(),rec.NbPixelY(), BufferedImage.TYPE_INT_RGB);
-		int r,g,b;
-		
+	public static void affichage(RectDeTravail rec,Polynome p,Complexe c,int max_iter,char JORM,String dirname) {
+		BufferedImage img = new BufferedImage(rec.NbPixelX()+1,rec.NbPixelY()+1, BufferedImage.TYPE_INT_RGB);
+		int ind;
+		int max_div = 0;
 		int xx = 0;
 		
-		for(Double i=-1.0;i<1.0;i+=rec.pas) {
+		for(Double i=rec.x1;i<rec.x2;i+=rec.pas) {
 			int yy = 0;
-			for(Double j=1.0;j>-1.0;j-=rec.pas) {
+			for(Double j=rec.y2;j>rec.y1;j-=rec.pas) {
 				Complexe tmp = new Complexe(i,j);
-				int ind = tmp.divergence(c,max_iter);
-				System.out.println(tmp.toString()+" : "+ind);
+				if(JORM == 'j') {
+					ind = tmp.divergence(p,c,max_iter);
+				}else  {
+					ind = c.divergence(p, tmp, max_iter);
+				}
+				if(max_div < ind && ind != max_iter)max_div = ind;
+				//System.out.println(tmp.toString()+" : "+ind);
 				if(ind < max_iter) {
-					r = 64; g = 224; b = 208;  //turquoise
-					img.setRGB(xx, yy, r | g | b );
+					int shade = ((255*ind)/(max_div+1)|0|0);
+					img.setRGB(xx, yy, shade );
 				}
 				if(ind == max_iter) {
-					r= 0; g=0; b=0;
-					img.setRGB(xx,yy, r | g | b );
+					img.setRGB(xx,yy, (0|0|0) );
 				}
 				yy++;
 			}
 			xx++;
 		}
-		File f1 = new File("FirstTry.png");
+		System.out.println(max_div);
+		File f1 = new File(dirname+".png");
 		try {
 			ImageIO.write(img, "PNG", f1);
 		} catch (IOException e) {

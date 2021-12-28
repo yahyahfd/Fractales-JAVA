@@ -49,7 +49,7 @@ public class Complexe {
             return new Complexe(reelle,imaginaire);
     }
 
-    public boolean equals(Complexe other) {
+    public boolean equals(Complexe o) {
     				return this.r == o.getR() && this.i == o.getI();
     }
 
@@ -79,24 +79,40 @@ public class Complexe {
 
 
 
-	public Complexe JuliaOP(Complexe c) {
-		return (this.multiplication(this)).somme(c);
-	}
-
-	public void JuliaIteration(Complexe c,int nb) {
+    public Complexe unPoly(Polynome p) {
+    	Complexe tmp = this;
+    	for(int i=1;i<p.degre;i++) {
+			tmp = tmp.multiplication(this);
+		}
+		Complexe tmp2 = tmp;
+		for(int j=1;j<p.coef;j++) {
+			tmp = tmp.somme(tmp2);
+		}
+		return tmp;
+    }
+    
+    public Complexe PolyRecu(Polynome p,Complexe c) {
+    	if(p.next == null) {
+    		return unPoly(p).somme(c);
+    	}else {
+    		return unPoly(p).somme(PolyRecu(p.next,c));
+    	}
+    }
+	
+	public void JuliaIteration(Polynome p,Complexe c,int nb) {
 		Complexe tmp = this;
 		for(int i = 0; i < nb ; i++) {
-			tmp = tmp.JuliaOP(c);
-			System.out.println(tmp.toString());
+			tmp = tmp.PolyRecu(p,c);
+			System.out.println(tmp.toString());		
 		}
 	}
 
-	public int divergence(Complexe c, int max_ite) {
+	public int divergence(Polynome p,Complexe c, int max_ite) {
 		int ite = 0;
 		Complexe zn = this;
 		int radius = 2;
 		while(ite < max_ite && zn.module() <= radius) {
-			zn = zn.JuliaOP(c);
+			zn = zn.PolyRecu(p,c);
 			ite++;
 		}
 		return ite;
