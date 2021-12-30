@@ -1,7 +1,5 @@
 package projet;
 
-
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +8,18 @@ import javax.imageio.ImageIO;
 
 public class Julia {
 	
-	public static void affichage(RectDeTravail rec,Polynome p,Complexe c,int max_iter,char JORM,String dirname) {
+	public static void affichage(BufferedImage img, String dirname) {
+
+		File f1 = new File(dirname+".png");
+		try {
+			ImageIO.write(img, "PNG", f1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static BufferedImage createImage(RectDeTravail rec, Polynome p, Complexe c, int max_iter, char JORM) {
 		BufferedImage img = new BufferedImage(rec.NbPixelX()+1,rec.NbPixelY()+1, BufferedImage.TYPE_INT_RGB);
 		int ind;
 		int max_div = 0;
@@ -39,15 +48,7 @@ public class Julia {
 			xx++;
 		}
 		System.out.println(max_div);
-		File f1 = new File(dirname+".png");
-		try {
-			ImageIO.write(img, "PNG", f1);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return img;
 	}
-	
-
 	
 }

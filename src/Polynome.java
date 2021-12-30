@@ -14,7 +14,7 @@ public class Polynome {
 	public static Polynome makePoly(int d,int c, Polynome n) throws Exception {
 		try {
             if(d<=n.degre) {
-            	throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax.");
+            	throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax. (respect the spaces)");
             }
         } catch (NullPointerException e) {
         	//this means our polynome is finished, we don't do anything
@@ -30,23 +30,36 @@ public class Polynome {
 			if(tmp2.length==2) {
 				res = makePoly(Integer.parseInt(tmp2[1].substring(1)),Integer.parseInt(tmp2[0]),res);
 			}else {
-				throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax.");
+				throw new Exception("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax. (respect the spaces)");
 			}
 		}
 		return res;
 	}
 	
-	public String toString() {
-		if(this.coef == 0) {
-			return (this.next==null)?"0"+" + c":"0"+" + "+this.next.toString();
-		}else if (this.degre == 0) {
-			return (this.next==null)?""+this.coef+" + c":""+this.coef+" + "+this.next.toString();
+	private String toString(Polynome n) {
+		String rescoef;
+		if(n==null) {
+			rescoef = ""+this.coef;
 		}else {
-			String pref = this.coef==1? "": this.coef==-1?"-":""+this.coef;
-			String suff = this.degre>1?"^"+this.degre:"";
-			return (this.next==null)?pref+"x"+suff+" + c":pref+"x"+suff+" + "+this.next.toString();
+			if(this.coef>0) {
+				rescoef= " +"+this.coef;
+			}else {
+				rescoef= " "+this.coef;
+			}
 		}
-		
+		if(this.next == null) {
+			if(this.degre == 0) return rescoef;
+			if(this.degre == 1) return rescoef+"x";
+			return rescoef+"x^"+this.degre;
+		}else { 
+			if(this.degre == 0) return rescoef+this.next.toString(this);
+			if(this.degre == 1) return rescoef+"x"+this.next.toString(this);
+			return rescoef+"x^"+this.degre+this.next.toString(this);
+		}
+	}
+
+	public String toString() {
+		return this.toString(null);
 	}
 	
 }
