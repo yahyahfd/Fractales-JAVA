@@ -60,7 +60,7 @@ public class Main {
 		
 		RectDeTravail r1 = new RectDeTravail(-1.0,1.0,-1.0,1.0,0.01);
 		
-		Julia.affichage(r1,test,c1,1000);
+		Julia.affichage(r1,test,c1,1000,'j',"yesyeys");
 		System.out.println(test.toString());
 //		Polynome pst = new Polynome(2,1,null);
 //		Complexe tst = new Complexe(4,3);

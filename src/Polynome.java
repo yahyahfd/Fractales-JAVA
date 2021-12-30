@@ -36,30 +36,17 @@ public class Polynome {
 		return res;
 	}
 	
-	private String toString(Polynome n) {
-		String rescoef;
-		if(n==null) {
-			rescoef = ""+this.coef;
-		}else {
-			if(this.coef>0) {
-				rescoef= " +"+this.coef;
-			}else {
-				rescoef= " "+this.coef;
-			}
-		}
-		if(this.next == null) {
-			if(this.degre == 0) return rescoef;
-			if(this.degre == 1) return rescoef+"x";
-			return rescoef+"x^"+this.degre;
-		}else { 
-			if(this.degre == 0) return rescoef+this.next.toString(this);
-			if(this.degre == 1) return rescoef+"x"+this.next.toString(this);
-			return rescoef+"x^"+this.degre+this.next.toString(this);
-		}
-	}
-
 	public String toString() {
-		return this.toString(null);
+		if(this.coef == 0) {
+			return (this.next==null)?"0"+" + c":"0"+" + "+this.next.toString();
+		}else if (this.degre == 0) {
+			return (this.next==null)?""+this.coef+" + c":""+this.coef+" + "+this.next.toString();
+		}else {
+			String pref = this.coef==1? "": this.coef==-1?"-":""+this.coef;
+			String suff = this.degre>1?"^"+this.degre:"";
+			return (this.next==null)?pref+"x"+suff+" + c":pref+"x"+suff+" + "+this.next.toString();
+		}
+		
 	}
 	
 }
