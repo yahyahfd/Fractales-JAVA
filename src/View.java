@@ -150,7 +150,7 @@ public class View extends JFrame{
 
 		RectDeTravail r1 = new RectDeTravail(-1.0,1.0,-1.0,1.0,0.01);
 		Polynome test2 = Polynome.makePoly(2,1,null);
-		JPanel paint = new PaintPanel(Julia.createImage(r1,test2,c1,1000));
+		JPanel paint = new PaintPanel(Julia.createImage(r1,test2,c1,1000, 'j'));
 		full.setLayout(new GridBagLayout());
 		GridBagConstraints cons2 = new GridBagConstraints();
 		cons2.fill = GridBagConstraints.BOTH;
