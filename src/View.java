@@ -8,6 +8,7 @@ import javax.swing.text.PlainDocument;
 import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 
 public class View extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -18,7 +19,7 @@ public class View extends JFrame{
 	static JButton sub, save;
 	
 	public View() throws NumberFormatException, Exception {
-		setTitle("Julia");
+		setTitle("Julia and Mandelbrot sets");
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int x = (int) tk.getScreenSize().getWidth(); 
 		int y = (int) tk.getScreenSize().getHeight();
@@ -69,31 +70,52 @@ public class View extends JFrame{
 	
 	private class PaintPanel extends JPanel implements MouseWheelListener{
 		private static final long serialVersionUID = 1L;
-		
+		private double zoom = 1;
+		private double xM, yM;
 		private BufferedImage img;
 		
 		private PaintPanel(BufferedImage i){
 			this.img = i;
+			addMouseWheelListener(this);
 		}
 		
 		@Override
 		protected void paintComponent(Graphics g) {
-		    super.paintComponent(g);
-		    g.drawImage(img, 0, 0,this.getWidth(),this.getHeight(), null);
+			Graphics2D g2D = (Graphics2D) g;
+			super.paintComponent(g2D);
+	        AffineTransform at = g2D.getTransform();
+	        at.translate(xM, yM);
+	        at.scale(zoom, zoom);
+	        at.translate(-xM, -yM);
+	        g2D.setTransform(at);
+		    g2D.drawImage(img, 0, 0,this.getWidth(),this.getHeight(), null);
 		}
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-//			//Zoom in
-//	        if(e.getWheelRotation()<0){
-//	            this.setZoomFactor(1.1*this.getZoomFactor());
-//	            this.repaint();
-//	        }
-//	        //Zoom out
-//	        if(e.getWheelRotation()>0){
-//	            this.setZoomFactor(mydrawer.getZoomFactor()/1.1);
-//	            this.repaint();
-//	        }
+			xM = e.getX();
+            yM = e.getY();
+			//Zoom in
+	        if(e.getWheelRotation()<0){
+	            this.setZoom(1.1*this.getZoom());
+	            this.repaint();
+	        }
+	        //Zoom out
+	        if(e.getWheelRotation()>0){
+	        	this.setZoom(this.getZoom()/1.1);
+	        	if(this.getZoom()<1) this.setZoom(1);
+	            this.repaint();
+	        }
+		}
+
+		public double getZoom() {
+			return zoom;
+		}
+
+		public void setZoom(double z) {
+			if(z<zoom) zoom = zoom/1.1;
+			else if (z<1) zoom = 1;
+			else zoom = z;
 		}
 	}
 	
@@ -179,7 +201,6 @@ public class View extends JFrame{
 		cons2.weighty = 1; //100% height of window
 		cons2.weightx = 0.95; //75% window width
 		paint = new JPanel();
-		paint.setBackground(Color.red);
 		full.add(paint, cons2);
 		cons2.weightx = 0.05; //25% window width
 		cons2.gridx = 1;

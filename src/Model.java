@@ -1,5 +1,6 @@
 package projet;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,24 @@ public class Model {
 		}
 	}
 	
+	public static int max_div(RectDeTravail rec, Polynome p, Complexe c, int max_iter,char JORM) {
+		int ind,max_div=0;
+
+        for(Double i=rec.x1;i<rec.x2;i+=rec.pas) {
+                for(Double j=rec.y2;j>rec.y1;j-=rec.pas) {
+                        Complexe tmp = new Complexe(i,j);
+                        if(JORM == 'j') {
+                                ind = tmp.divergence(p,c,max_iter);
+                        }else  {
+                                ind = c.divergence(p, tmp, max_iter);
+                        }
+                        if(max_div < ind && ind != max_iter)max_div = ind;
+
+                }
+        }
+        return max_div;
+	}
+	
 	/**
 	 * Creates a BufferedImage representation of a Julia/Mandelbrot set
 	 * @param rec  the complex plane where we are working
@@ -52,25 +71,30 @@ public class Model {
 	public static BufferedImage createImage(RectDeTravail rec, Polynome p, Complexe c, int max_iter, char JORM) {
 		BufferedImage img = new BufferedImage(rec.NbPixelX()+1,rec.NbPixelY()+1, BufferedImage.TYPE_INT_RGB);
 		int ind;
-		int max_div = 0;
+		int max_div = max_div(rec,p,c,max_iter,JORM);
 		int xx = 0;
-		for(Double i=rec.x1;i<rec.x2;i+=rec.pas) {
+		for(Double i=rec.x1;xx<(rec.NbPixelX()+1);i+=rec.pas) {
 			int yy = 0;
-			for(Double j=rec.y2;j>rec.y1;j-=rec.pas) {
+			for(Double j=rec.y2;yy<(rec.NbPixelY()+1);j-=rec.pas) {
 				Complexe tmp = new Complexe(i,j);
 				if(JORM == 'j') {
 					ind = tmp.divergence(p,c,max_iter);
 				}else  {
 					ind = c.divergence(p, tmp, max_iter);
 				}
-				if(max_div < ind && ind != max_iter)max_div = ind;
+//				if(max_div < ind && ind != max_iter)max_div = ind;
 				//System.out.println(tmp.toString()+" : "+ind);
 				if(ind < max_iter) {
-					int shade = ((255*ind)/(max_div+1)|0|0);
+					
+					int degrade = (255*(max_div-ind))/(max_div);
+//					System.out.println(tmp.toString()+" : "+ind+ " Int du d�grad� : "+ degrade + " Max div : "+ max_div);					
+					int shade = new Color(degrade,degrade,255).getRGB();
 					img.setRGB(xx, yy, shade );
+					
 				}
-				if(ind == max_iter) {
-					img.setRGB(xx,yy, (0|0|0) );
+				if(ind == max_iter){
+					
+					img.setRGB(xx,yy, new Color(1, 152, 117).getRGB());
 				}
 				yy++;
 			}
