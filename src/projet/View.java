@@ -10,14 +10,67 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 
+/**
+ * View class: used for graphic mode
+ * @author HAFID Yahya 71800678
+ * @author OUBADIA Tanel 71806010
+ */
 public class View extends JFrame{
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * full: the whole main panel<br/>
+	 * paint: the panel that contains the image<br/>
+	 * settings: the panel that contains the settings and paramaters
+	 */
 	private JPanel full, paint, settings;
+	/**
+	 * poly: the polynomial's panel<br/>
+	 * c: the complex's panel<br/>
+	 * plane: the plane's panel<br/>
+	 * jorm: the set's panel<br/>
+	 * iter: the max iteration panel<br/>
+	 * btnPane: the panel containing the save and sub buttons
+	 */
 	private static JPanel poly, c, plane, jorm, iter, btnPane;
+	/**
+	 * polyPlaceholder: contains the placeholder for the polynomial's panel<br/>
+	 * cPlaceholder: contains the placeholder for the complex's panel<br/>
+	 * planePlaceholder: contains the placeholder for the plane's panel<br/>
+	 * jormPlaceholder: contains the placeholder for the set's panel<br/>
+	 * iterPlaceholder: contains the placeholder for the max iteration panel
+	 */
 	private static String polyPlaceholder, cPlaceholder, planePlaceholder, jormPlaceholder, iterPlaceholder;
+	/**
+	 * Welcome label
+	 */
 	private static JLabel welc;
-	static JButton sub, save;
+	/**
+	 * sub is used to submit the data written in all the text areas<br/>
+	 * save is locked by default, and unlocked when an image is generated and is ready to be saved
+	 */
+	private static JButton sub, save;
 	
+	/**
+	 * @return sub button
+	 */
+	public static JButton getSub() {
+		return sub;
+	}
+	
+	/**
+	 * @return save button
+	 */
+	public static JButton getSave() {
+		return save;
+	}
+	/**
+	 * This class represents the graphic mode
+	 * @throws NumberFormatException if we try to parse a string into an int/double
+	 * @throws Exception all the other exceptions
+	 */
 	public View() throws NumberFormatException, Exception {
 		setTitle("Julia and Mandelbrot sets");
 		Toolkit tk = Toolkit.getDefaultToolkit();
@@ -29,15 +82,34 @@ public class View extends JFrame{
 	    this.setVisible(true);
 	}
 	
+	/**
+	 * This class is used to create a JPanel containing a JTextArea, a JScrollPane and JLabel
+	 */
 	private class FieldPanel extends JPanel{
+		/**
+		 * 
+		 */
 		private static final long serialVersionUID = 1L;
-		
+
+		/**
+		 * @param n text shown in the JLabel
+		 * @param m maximum size of the JTextArea
+		 * @param p the placeholder text used inside JTextArea
+		 * @param b if true, JTextArea is editable
+		 */
 		private FieldPanel(String n, int m, String p, boolean b) {
 			super();
 			this.setLayout(new GridLayout(2,1));
 			this.labelTextArea(n, m, p, b);
 		}
 		
+		/**
+		 * Methode used to create and configure a JTextArea linked to a JLabel and a JScrollPane
+		 * @param n text shown in the JLabel
+		 * @param max maximum size of the JTextArea
+		 * @param placeholder the placeholder text used inside JTextArea
+		 * @param b if true, JTextArea is editable
+		 */
 		private void labelTextArea(String n, int max, String placeholder, boolean b) {
 			JTextArea txt = new JTextArea(placeholder,3,25);
 			txt.setDocument(new TextFieldMax(max));
@@ -68,12 +140,36 @@ public class View extends JFrame{
 		}
 	}
 	
+	/**
+	 * This class is used to create a panel that displays a Buffered Image. 
+	 * It includes a zooming functionality
+	 */
 	private class PaintPanel extends JPanel implements MouseWheelListener{
+		/**
+		 * 
+		 */
 		private static final long serialVersionUID = 1L;
+		/**
+		 * The zoom: by default is 1
+		 */
 		private double zoom = 1;
-		private double xM, yM;
+		/**
+		 * The x coordinate to which we zoom
+		 */
+		private double xM = this.getWidth()/2;
+		/**
+		 * The y coordinate to which we zoom
+		 */
+		private double yM = this.getHeight()/2;
+		/**
+		 * The image shown
+		 */
 		private BufferedImage img;
 		
+		/**
+		 * Constructor for the paint panel
+		 * @param i the image to add to this panel
+		 */
 		private PaintPanel(BufferedImage i){
 			this.img = i;
 			addMouseWheelListener(this);
@@ -88,15 +184,15 @@ public class View extends JFrame{
 	        at.scale(zoom, zoom);
 	        at.translate(-xM, -yM);
 	        g2D.setTransform(at);
-		    g2D.drawImage(img, 0, 0,this.getWidth(),this.getHeight(), null);
+		    g2D.drawImage(img, 0, 0,this.getWidth(),this.getHeight(), this);
 		}
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			xM = e.getX();
-            yM = e.getY();
 			//Zoom in
 	        if(e.getWheelRotation()<0){
+				xM = e.getX();
+	            yM = e.getY();
 	            this.setZoom(1.1*this.getZoom());
 	            this.repaint();
 	        }
@@ -107,11 +203,19 @@ public class View extends JFrame{
 	            this.repaint();
 	        }
 		}
-
+		
+		/**
+		 * Getter for zoom value
+		 * @return zoom value
+		 */
 		public double getZoom() {
 			return zoom;
 		}
-
+		
+		/**
+		 * Setter for zoom size
+		 * @param z new zoom value
+		 */
 		public void setZoom(double z) {
 			if(z<zoom) zoom = zoom/1.1;
 			else if (z<1) zoom = 1;
@@ -119,9 +223,23 @@ public class View extends JFrame{
 		}
 	}
 	
+	/**
+	 * This class is used as a size limiter for our textfields inside
+	 * {@link PaintPanel}
+	 */
 	private class TextFieldMax extends PlainDocument{
+		/**
+		 * 
+		 */
 		private static final long serialVersionUID = 1L;
+		/**
+		 * The maximum size
+		 */
 		private int maxsize;
+		/**
+		 * This method helps creating a text field with a max character count
+		 * @param m the max char count we want
+		 */
 		private TextFieldMax(int m) {
 			super();
 			this.maxsize = m;
@@ -138,6 +256,13 @@ public class View extends JFrame{
 		}
 	}
 	
+	/**
+	 * This method is used to fill the whole frame
+	 * @throws NumberFormatException if we try to parse a string to an int/double
+	 * @throws Exception all the other exceptions
+	 * @see PaintPanel
+	 * @see FieldPanel
+	 */
 	public void fillFrame() throws NumberFormatException, Exception {
 		full = new JPanel();//whole window panel
 		
@@ -207,7 +332,11 @@ public class View extends JFrame{
 		full.add(settings,cons2);
 		this.add(full);
 	}
-	
+	/**
+	 * This method is used to add the image i to our painting panel inside {@link #fillFrame()}
+	 * @param i the image to add
+	 * @see PaintPanel
+	 */
 	public void paintIt(BufferedImage i) {
 		full.removeAll();
 		GridBagConstraints cons2 = new GridBagConstraints();
@@ -222,29 +351,48 @@ public class View extends JFrame{
 		this.revalidate();
 		this.repaint();
 	}
-	
+	/**
+	 * Gets a JTextArea from a JScrollPane
+	 * @param p panel containing the JScrollPane
+	 * @return The JTextArea contained in this panel p
+	 */
 	private static JTextArea jscrollpaneText (JPanel p) {
 		JViewport n = ((JScrollPane) p.getComponent(1)).getViewport();
 		JTextArea l = (JTextArea) n.getView();
 		return l;
 	}
 	
+	/**
+	 * @return the text area containing our complex's data
+	 */
 	public static JTextArea getC() {
 		return jscrollpaneText(c);
 	}
 	
+	/**
+	 * @return the text area containing our polynomial's data
+	 */
 	public static JTextArea getPoly() {
 		return jscrollpaneText(poly);
 	}
 	
+	/**
+	 * @return the text area containing our plane's data
+	 */
 	public static JTextArea getPlane() {
 		return jscrollpaneText(plane);
 	}
 	
+	/**
+	 * @return the text area containing the value 'j' for Julia or 'm' for Mandelbrot
+	 */
 	public static JTextArea getJorm() {
 		return jscrollpaneText(jorm);
 	}
 	
+	/**
+	 * @return the text area containing the value of maximum iterations
+	 */
 	public static JTextArea getIter() {
 		return jscrollpaneText(iter);
 	}
