@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
+
+
 
 public class Model {
 	Polynome p;
@@ -70,20 +73,80 @@ public class Model {
 	 */
 	public static BufferedImage createImage(RectDeTravail rec, Polynome p, Complexe c, int max_iter, char JORM) {
 		BufferedImage img = new BufferedImage(rec.NbPixelX()+1,rec.NbPixelY()+1, BufferedImage.TYPE_INT_RGB);
-		int ind;
-		int max_div = max_div(rec,p,c,max_iter,JORM);
+		
+		int max_div=max_div(rec,p,c,max_iter,JORM);
 		int xx = 0;
+		
 		for(Double i=rec.x1;xx<(rec.NbPixelX()+1);i+=rec.pas) {
 			int yy = 0;
 			for(Double j=rec.y2;yy<(rec.NbPixelY()+1);j-=rec.pas) {
-				Complexe tmp = new Complexe(i,j);
+				(new Thread(new MultiDiv(new Complexe(i,j),p,c,max_iter,JORM,max_div,img,xx,yy))).start();
+				yy++;
+			}
+		xx++;
+		}
+		
+			
+//		for(Double i=rec.x1;xx<(rec.NbPixelX()+1);i+=rec.pas) {
+//			int yy = 0;
+//			for(Double j=rec.y2;yy<(rec.NbPixelY()+1);j-=rec.pas) {
+//				Complexe tmp = new Complexe(i,j);
+//				if(JORM == 'j') {
+//					ind = tmp.divergence(p,c,max_iter);
+//				}else  {
+//					ind = c.divergence(p, tmp, max_iter);
+//				}
+////				if(max_div < ind && ind != max_iter)max_div = ind;
+//				//System.out.println(tmp.toString()+" : "+ind);
+//				if(ind < max_iter) {
+//					
+//					int degrade = (255*(max_div-ind))/(max_div);
+////					System.out.println(tmp.toString()+" : "+ind+ " Int du dégradé : "+ degrade + " Max div : "+ max_div);					
+//					int shade = new Color(degrade,degrade,255).getRGB();
+//					img.setRGB(xx, yy, shade );
+//					
+//				}
+//				if(ind == max_iter){
+//					
+//					img.setRGB(xx,yy, Color.RED.getRGB());
+//				}
+//				yy++;
+//			}
+//			xx++;
+//		}
+		return img;
+	}
+	private static class MultiDiv implements Runnable{
+		Complexe point;
+		Polynome p;
+		Complexe c;
+		int max_iter,xx,yy;
+		char JORM;
+		int max_div;
+		BufferedImage img;
+		
+		static int ind;
+		
+		public MultiDiv(Complexe pt,Polynome p, Complexe c, int max_iter, char JORM,int max_div,BufferedImage img,int xx,int yy) {
+			this.point = pt;
+			this.p = p;
+			this.c = c;
+			this.max_iter = max_iter;
+			this.JORM = JORM;
+			this.max_div = max_div;
+			this.img = img;
+			this.xx = xx;this.yy=yy;
+		}
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+//			synchronized(ind) {
+				Complexe tmp = this.point;
 				if(JORM == 'j') {
 					ind = tmp.divergence(p,c,max_iter);
-				}else  {
+				}else {
 					ind = c.divergence(p, tmp, max_iter);
 				}
-//				if(max_div < ind && ind != max_iter)max_div = ind;
-				//System.out.println(tmp.toString()+" : "+ind);
 				if(ind < max_iter) {
 					
 					int degrade = (255*(max_div-ind))/(max_div);
@@ -93,14 +156,11 @@ public class Model {
 					
 				}
 				if(ind == max_iter){
-					
 					img.setRGB(xx,yy, Color.RED.getRGB());
 				}
-				yy++;
-			}
-			xx++;
+//			}
+			
 		}
-		return img;
 	}
 	
 	private static class Complexe{
