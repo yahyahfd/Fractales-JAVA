@@ -11,11 +11,11 @@ import java.awt.event.*;
 
 public class View extends JFrame{
 	private static final long serialVersionUID = 1L;
-	private JPanel full, result, paint, settings;
-	private static JPanel poly, c, plane;
-	private static String polyPlaceholder, cPlaceholder, rPlaceholder, planePlaceholder;
+	private JPanel full, paint, settings;
+	private static JPanel poly, c, plane, jorm, iter, btnPane;
+	private static String polyPlaceholder, cPlaceholder, planePlaceholder, jormPlaceholder, iterPlaceholder;
 	private static JLabel welc;
-	static JButton sub;
+	static JButton sub, save;
 	
 	public View() throws NumberFormatException, Exception {
 		setTitle("Julia");
@@ -38,7 +38,7 @@ public class View extends JFrame{
 		}
 		
 		private void labelTextArea(String n, int max, String placeholder, boolean b) {
-			JTextArea txt = new JTextArea(placeholder,5,25);
+			JTextArea txt = new JTextArea(placeholder,3,25);
 			txt.setDocument(new TextFieldMax(max));
 			txt.setForeground(Color.GRAY);
 			txt.setLineWrap(true);
@@ -119,26 +119,40 @@ public class View extends JFrame{
 	public void fillFrame() throws NumberFormatException, Exception {
 		full = new JPanel();//whole window panel
 		
-		polyPlaceholder = "Enter a polynomial of the form: ax^n +by^(n-1) +... +cx^0";
-		cPlaceholder = "Enter a complex number of the form: a +bi";
-		rPlaceholder = "Result...";
-		planePlaceholder = "Enter the coordinates of the plane we are working on using one of the following formats:\n1) x,pas\n2) x,y,pas\n3) x1,x2,y1,y2,pas";
-		poly = new FieldPanel("Polynome", -1, polyPlaceholder, true);
-		c = new FieldPanel("C",-1,cPlaceholder, true);
-		plane = new FieldPanel("Plane",-1,planePlaceholder, true);
+		polyPlaceholder = "<html>Enter a polynomial of the form:<br/>ax^n +by^(n-1) +... +cx^0</html>";
+		cPlaceholder = "<html>Enter a complex number of the form:<br/> a +bi</html>";
+		planePlaceholder = "<html>Enter the coordinates of the plane<br/>following one of these formats:<br/>1) x,pas<br/>2) x,y,pas<br/>3) x1,x2,y1,y2,pas</html>";
+		jormPlaceholder = "Enter 'j' for Julia, or 'm' for Mandelbrot";
+		iterPlaceholder = "Enter the number of iterations";
+		
+		poly = new FieldPanel(polyPlaceholder, -1, "1x^2", true);
+		getPoly().append("1x^2");
+		c = new FieldPanel(cPlaceholder,-1,"0.285 +0.013i", true);
+		getC().append("0.285 +0.013i");
+		plane = new FieldPanel(planePlaceholder,-1,"1.25,0.001", true);
+		getPlane().append("1.25,0.001");
+		jorm = new FieldPanel(jormPlaceholder, 1,"j", true);
+		getJorm().append("j");
+		iter = new FieldPanel(iterPlaceholder, -1, "1000", true);
+		getIter().append("1000");
 		welc = new JLabel("Welcome");
 		sub = new JButton("Submit");
-		result = new FieldPanel("Result", -1, rPlaceholder, false);
+		save = new JButton("Save");
+		save.setEnabled(false);
+		btnPane = new JPanel(new FlowLayout());
+		btnPane.add(sub);
+		btnPane.add(save);
+		
 
 		settings = new JPanel();
-		//10x^100 +10x^99 +10x^98 +10x^97 +10x^96 +10x^95 +10x^94 +10x^93 +10x^92 +10x^91 +10x^90 +10x^89 +10x^88 +10x^87 +10x^86 +10x^85 +10x^84 +10x^83 +10x^82 +10x^81 +10x^80
-		
+
 		//tmp borders (remove later)
 		poly.setBorder(BorderFactory.createLineBorder(Color.red));
 		full.setBorder(BorderFactory.createLineBorder(Color.blue));
 		c.setBorder(BorderFactory.createLineBorder(Color.pink));
 		plane.setBorder(BorderFactory.createLineBorder(Color.yellow));
-		result.setBorder(BorderFactory.createLineBorder(Color.orange));
+		jorm.setBorder(BorderFactory.createLineBorder(Color.gray));
+		iter.setBorder(BorderFactory.createLineBorder(Color.pink));
 		settings.setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		//making settings panel
@@ -153,10 +167,12 @@ public class View extends JFrame{
 		cons1.gridy = 3;
 		settings.add(plane,cons1);
 		cons1.gridy = 4;
-		settings.add(sub, cons1);
+		settings.add(jorm,cons1);
 		cons1.gridy = 5;
-		settings.add(result, cons1);
-		sub.requestFocus();
+		settings.add(iter,cons1);
+		cons1.gridy = 6;
+		settings.add(btnPane, cons1);
+		
 		full.setLayout(new GridBagLayout());
 		GridBagConstraints cons2 = new GridBagConstraints();
 		cons2.fill = GridBagConstraints.BOTH;
@@ -186,15 +202,6 @@ public class View extends JFrame{
 		this.repaint();
 	}
 	
-	public void changeResult(String n) {
-		try {
-			jscrollpaneText(result).setText(n);
-		}catch(Exception e1) {
-			jscrollpaneText(result).setText("Wrong polynome syntax: Please respect the \"ax^n +by^(n-1) +... +cx^0\" syntax. (respect the spaces)");
-			e1.printStackTrace();
-		}
-	}
-	
 	private static JTextArea jscrollpaneText (JPanel p) {
 		JViewport n = ((JScrollPane) p.getComponent(1)).getViewport();
 		JTextArea l = (JTextArea) n.getView();
@@ -211,5 +218,13 @@ public class View extends JFrame{
 	
 	public static JTextArea getPlane() {
 		return jscrollpaneText(plane);
+	}
+	
+	public static JTextArea getJorm() {
+		return jscrollpaneText(jorm);
+	}
+	
+	public static JTextArea getIter() {
+		return jscrollpaneText(iter);
 	}
 }

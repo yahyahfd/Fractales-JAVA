@@ -1,14 +1,18 @@
 package projet;
 
+import java.awt.image.BufferedImage;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class Controller {
 	private static View view;
 	private static Model model;
-	static Scanner scan = new Scanner(System.in);	
+	private static Scanner scan = new Scanner(System.in);
+	private static String r, p, c, n, iter, jorm;
+	private static BufferedImage img;
 	public synchronized static void startProgram() throws NumberFormatException, Exception {
 		System.out.println("Type 1 for graphic mode, and 2 for terminal mode:");
 		try {
@@ -16,31 +20,58 @@ public class Controller {
 			if(value==1) {
 				view = new View();
 				View.sub.addActionListener(e ->{
-					view.changeResult(View.getPoly().getText()+" + ("+View.getC().getText()+")");
 					try {
-						model = new Model(View.getPoly().getText(), View.getC().getText(), View.getPlane().getText());
+						p = View.getPoly().getText();
+						c = View.getC().getText();
+						r = View.getPlane().getText();
+						model = new Model(p, c, r);
+						img = Model.createImage(model.r,model.p,model.c,Integer.parseInt(View.getIter().getText()),View.getJorm().getText().charAt(0));
+						view.paintIt(img);
+						View.save.setEnabled(true);
 					} catch (Exception e1) {
+						View.save.setEnabled(false);
 						e1.printStackTrace();
 					}
-					view.paintIt(Model.createImage(model.r,model.p,model.c,1000,'j'));
+				});
+				View.save.addActionListener(e ->{
+					String m = JOptionPane.showInputDialog("Choose a path to save the rendered image to: (default is "+p+c+".png)");
+					try {
+						if(m.isBlank()) m = p+c;
+						Model.affichage(img, m);
+				        System.out.println("Saved to "+m+".png");
+					}catch (NullPointerException e1){
+						System.out.println("Did not save because user canceled the operation.");
+					}
 				});
 			}else if (value==2) {
 				System.out.println("Enter the coordinates of the plane we are working on using one of the following formats:\n1) x,pas\n2) x,y,pas\n3) x1,x2,y1,y2,pas");
 				scan.nextLine();
-				String r = scan.nextLine();
+				r = scan.nextLine();
 				System.out.println("Enter a polynomial of the form: ax^n +by^(n-1) +... +cx^0");
-				String p = scan.nextLine();
+				p = scan.nextLine();
 				System.out.println("Enter a complex number of the form: a +bi");
-				String c = scan.nextLine();
+				c = scan.nextLine();
 				model = new Model(p, c, r);
 				System.out.println("Choose a name for your rendered image (press enter for using polynomial as name)");
-				String n = scan.nextLine();
+				n = scan.nextLine();
+				System.out.println("Choose the number of iterations (1000 is default if you don't enter an integer)");
+				iter = scan.nextLine();
+				System.out.println("Type 'j' if you want a Julia sets, 'm' if you want Mandelbrot sets (default is Julia)");
+				jorm = scan.nextLine();
+				if(jorm != "j" || jorm != "m") jorm = "j";
+				int res = 1000;
+				try {
+					res = Integer.parseInt(iter);
+				}catch(Exception e) {
+					res = 1000;
+				}
+				img = Model.createImage(model.r,model.p,model.c,res,jorm.charAt(0));
 				if(n==""||n==" ") {
 					System.out.println("Saving your rendered image under the name:"+p+c+".png");
-					Model.affichage(Model.createImage(model.r,model.p,model.c,1000,'j'),(p+"+("+c+")").replaceAll("\\s+",""));
+					Model.affichage(img,(p+"+("+c+")").replaceAll("\\s+",""));
 				}else {
 					System.out.println("Saving your rendered image under the name:"+n+".png");
-					Model.affichage(Model.createImage(model.r,model.p,model.c,1000,'j'),n);
+					Model.affichage(img,n);
 				}
 			}else {
 				System.out.println("Wrong input!");
@@ -67,8 +98,9 @@ public class Controller {
 	}
 }
 
+//10x^100 +10x^99 +10x^98 +10x^97 +10x^96 +10x^95 +10x^94 +10x^93 +10x^92 +10x^91 +10x^90 +10x^89 +10x^88 +10x^87 +10x^86 +10x^85 +10x^84 +10x^83 +10x^82 +10x^81 +10x^80
 
-//Complexe c1 = new Complexe(0.3,0.5);
+//Complexe c1 = new Complexe();
 //Polynome testa = Polynome.makePoly(0,1,null);
 //Polynome test = Polynome.makePoly(2,3,testa);
 //
@@ -78,6 +110,6 @@ public class Controller {
 //System.out.println(test.toString());
 //
 //Polynome test1 = Polynome.makePoly(2,5,Polynome.makePoly(1,2,Polynome.makePoly(0,7,null)));
-//Polynome test2 = Polynome.parsePoly("5x^2 -2x^1 +7x^0");
+//Polynome test2 = Polynome.parsePoly("");
 //System.out.println(test1.toString());
 //System.out.println(test2.toString());
