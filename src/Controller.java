@@ -18,7 +18,7 @@ public class Controller {
 				View.sub.addActionListener(e ->{
 					view.changeResult(View.getPoly().getText()+" + ("+View.getC().getText()+")");
 					try {
-						model = new Model(View.getPoly().getText(), View.getC().getText(), "1, 0.01");//change so we can specify
+						model = new Model(View.getPoly().getText(), View.getC().getText(), View.getPlane().getText());
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}

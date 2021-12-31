@@ -208,4 +208,8 @@ public class View extends JFrame{
 	public static JTextArea getPoly() {
 		return jscrollpaneText(poly);
 	}
+	
+	public static JTextArea getPlane() {
+		return jscrollpaneText(plane);
+	}
 }
