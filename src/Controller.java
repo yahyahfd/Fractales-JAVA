@@ -16,13 +16,12 @@ public class Controller {
 			if(value==1) {
 				view = new View();
 				View.sub.addActionListener(e ->{
-					view.changeResult(View.getPoly().getText()+" + ("+View.getC().getText()+")");
 					try {
 						model = new Model(View.getPoly().getText(), View.getC().getText(), View.getPlane().getText());
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
-					view.paintIt(Model.createImage(model.r,model.p,model.c,1000,'j'));
+					view.paintIt(Model.createImage(model.r,model.p,model.c,1000,View.getJorm().getText().charAt(0)));
 				});
 			}else if (value==2) {
 				System.out.println("Enter the coordinates of the plane we are working on using one of the following formats:\n1) x,pas\n2) x,y,pas\n3) x1,x2,y1,y2,pas");
@@ -35,12 +34,20 @@ public class Controller {
 				model = new Model(p, c, r);
 				System.out.println("Choose a name for your rendered image (press enter for using polynomial as name)");
 				String n = scan.nextLine();
+				System.out.println("Choose the number of iterations (1000 is default if you don't enter an integer)");
+				String iter = scan.nextLine();
+				int res = 1000;
+				try {
+					res = Integer.parseInt(iter);
+				}catch(Exception e) {
+					res = 1000;
+				}
 				if(n==""||n==" ") {
 					System.out.println("Saving your rendered image under the name:"+p+c+".png");
-					Model.affichage(Model.createImage(model.r,model.p,model.c,1000,'j'),(p+"+("+c+")").replaceAll("\\s+",""));
+					Model.affichage(Model.createImage(model.r,model.p,model.c,res,'j'),(p+"+("+c+")").replaceAll("\\s+",""));
 				}else {
 					System.out.println("Saving your rendered image under the name:"+n+".png");
-					Model.affichage(Model.createImage(model.r,model.p,model.c,1000,'j'),n);
+					Model.affichage(Model.createImage(model.r,model.p,model.c,res,'j'),n);
 				}
 			}else {
 				System.out.println("Wrong input!");
@@ -67,8 +74,9 @@ public class Controller {
 	}
 }
 
+//10x^100 +10x^99 +10x^98 +10x^97 +10x^96 +10x^95 +10x^94 +10x^93 +10x^92 +10x^91 +10x^90 +10x^89 +10x^88 +10x^87 +10x^86 +10x^85 +10x^84 +10x^83 +10x^82 +10x^81 +10x^80
 
-//Complexe c1 = new Complexe(0.3,0.5);
+//Complexe c1 = new Complexe();
 //Polynome testa = Polynome.makePoly(0,1,null);
 //Polynome test = Polynome.makePoly(2,3,testa);
 //
@@ -78,6 +86,6 @@ public class Controller {
 //System.out.println(test.toString());
 //
 //Polynome test1 = Polynome.makePoly(2,5,Polynome.makePoly(1,2,Polynome.makePoly(0,7,null)));
-//Polynome test2 = Polynome.parsePoly("5x^2 -2x^1 +7x^0");
+//Polynome test2 = Polynome.parsePoly("");
 //System.out.println(test1.toString());
 //System.out.println(test2.toString());
