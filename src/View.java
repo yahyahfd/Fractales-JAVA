@@ -12,10 +12,10 @@ import java.awt.event.*;
 public class View extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JPanel full, paint, settings;
-	private static JPanel poly, c, plane, jorm, iter;
+	private static JPanel poly, c, plane, jorm, iter, btnPane;
 	private static String polyPlaceholder, cPlaceholder, planePlaceholder, jormPlaceholder, iterPlaceholder;
 	private static JLabel welc;
-	static JButton sub;
+	static JButton sub, save;
 	
 	public View() throws NumberFormatException, Exception {
 		setTitle("Julia");
@@ -137,6 +137,12 @@ public class View extends JFrame{
 		getIter().append("1000");
 		welc = new JLabel("Welcome");
 		sub = new JButton("Submit");
+		save = new JButton("Save");
+		save.setEnabled(false);
+		btnPane = new JPanel(new FlowLayout());
+		btnPane.add(sub);
+		btnPane.add(save);
+		
 
 		settings = new JPanel();
 
@@ -165,7 +171,7 @@ public class View extends JFrame{
 		cons1.gridy = 5;
 		settings.add(iter,cons1);
 		cons1.gridy = 6;
-		settings.add(sub, cons1);
+		settings.add(btnPane, cons1);
 		
 		full.setLayout(new GridBagLayout());
 		GridBagConstraints cons2 = new GridBagConstraints();
